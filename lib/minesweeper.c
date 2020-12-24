@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-//Project Name:     minesweeper/mineswee[er].c
+//Project Name:     minesweeper
 //Description:      The classic game "Minesweeper" built in c
 //-----------------------------------------------------------------------------
 //Author:           laazyLlama
@@ -13,15 +13,23 @@
 #define ANSI_COLOR_GREEN "\x1b[32m"
 #define ANSI_COLOR_YELLOW "\x1b[33m"
 #define ANSI_COLOR_BLUE "\x1b[34m"
-#define ANSI_COLOR_MAGENTA "\x1b[35m"
-#define ANSI_COLOR_CYAN "\x1b[36m"
+//#define ANSI_COLOR_MAGENTA "\x1b[35m"
+//#define ANSI_COLOR_CYAN "\x1b[36m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
-void print_board();
+void print_board(char*);
 void print_horizontal_border();
 void print_cell(char);
 
 int main() {
+  char board[10][10];
+  for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++) {
+      //printf("%d %d\n", i, j);
+      board[i][j] = '.';
+    }
+  }
+
   //board layout:
   /*
    *      0   1   2   3   4   5   6   7   8   9
@@ -48,8 +56,7 @@ int main() {
    *    +---+---+---+---+---+---+---+---+---+---+
    */
   //none = " ", covered = ".", flag = "X", mine = "*", number = "1-8"
-
-  print_board();
+  print_board(&board[0][0]);
 
   return 0;
 }
@@ -59,19 +66,23 @@ int main() {
  *
  * @return always void
  */
-void print_board() {
+void print_board(char *currentBoard) {
+  char currentSymbol = '0';
   printf("\n");
   printf("     0   1   2   3   4   5   6   7   8   9  \n");
   for (int i = 0; i < 10; i++) {
     print_horizontal_border();
     printf(" %c |", i + 65);
     for (int j = 0; j < 10; j++) {
-      print_cell('.');
+      currentSymbol = *currentBoard;
+      print_cell(currentSymbol);
+      currentBoard++;
     }
     printf("\n");
   }
   print_horizontal_border();
   printf("\n");
+  return;
 }
 
 /**
@@ -83,6 +94,7 @@ void print_board() {
  */
 void print_horizontal_border() {
   printf("   +---+---+---+---+---+---+---+---+---+---+\n");
+  return;
 }
 
 /**
@@ -115,4 +127,5 @@ void print_cell(char symbol) {
       printf(ANSI_COLOR_RESET "|");
       break;
   }
+  return;
 }
