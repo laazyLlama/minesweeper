@@ -20,6 +20,7 @@
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 void generate_board(int, int, int, char*);
+void generate_surrounding_numbers(char*, char*);
 void print_board(char*);
 void print_horizontal_border();
 void print_cell(char);
@@ -28,12 +29,9 @@ int main() {
   char board[10][10];
   for (int i = 0; i < 10; i++) {
     for (int j = 0; j < 10; j++) {
-      board[i][j] = '.';
+      board[i][j] = '0';
     }
   }
-  //board[0][0] = '2';
-  //board[0][1] = '3';
-  //board[0][2] = '*';
 
   generate_board(0, 0, 10, &board[0][0]);
 
@@ -74,23 +72,28 @@ int main() {
  * @param saveX The X coordinate of the guaranteed save position
  * @param saveY The Y coordinate of the guaranteed save position
  * @param count Number of bombs to generate
+ * @param *cell a pointer to the first cell of the board
  *
  * @return always void
  */
 void generate_board(int saveX, int saveY, int count, char *cell) {
   int x = 0;
   int y = 0;
-
-  // Intialize rng
+  // Intialize rng using system time as seed
   srand((unsigned) time(0));
 
   for (int i = 0; i < count; i++) {
+    // generate a random position to place a bomb
     x = rand() % 10;
     y = rand() % 10;
-    if ((*(cell + (x + y * 10)) != '*') && (x != saveX && y != saveY)) {
+    // check if the currently selected cell is valid (it is not the save pos
+    // and has no bomb in it)
+    if ((*(cell + (x + y * 10)) != '*') && (x != saveX || y != saveY)) {
+      // if the cell is valid generate a bomb and its surrounding numbers
       *(cell + (x + y * 10)) = '*';
-      //printf("%c", *(cell + (x + y * 10)));
+      generate_surrounding_numbers(cell + (x + y * 10), cell);
     }
+    // if not, decrease the counter, to try generating another, valid bomb
     else {
       i--;
     }
@@ -99,19 +102,49 @@ void generate_board(int saveX, int saveY, int count, char *cell) {
 }
 
 /**
+ * Generates the numbers that indicate the amount of bombs adjacent to the
+ * current tile
+ *
+ * @param *bomb pointer to the cell, where the last bomb was generated
+ * @param *start pointer to the first position in the array
+ *
+ * @return always void
+ */
+void generate_surrounding_numbers(char *bomb, char *start) {
+//TODO: rewrite this bullshit to be understandable and fully functional
+  if((bomb - start) >= 10) {
+    for (int i = -11; i <= -9; i++) {
+      if (*(bomb + i) != '*') {
+        (*(bomb + i))++;
+      }
+    }
+  }
+  for (int i = -1; i <= 1; i++) {
+    if (*(bomb + i) != '*') {
+      (*(bomb + i))++;
+    }
+  }
+  for (int i = 9; i <= 11; i++) {
+    if (*(bomb + i) != '*') {
+      (*(bomb + i))++;
+    }
+  }
+}
+
+/**
  * Prints the minesweeper board in its current state
+ *
+ * @param *currentSymbol pointer to the symbol to print inside the current cell
  *
  * @return always void
  */
 void print_board(char *currentSymbol) {
-  //char currentSymbol = '0';
   printf("\n");
   printf("     0   1   2   3   4   5   6   7   8   9  \n");
   for (int i = 0; i < 10; i++) {
     print_horizontal_border();
     printf(" %c |", i + 65);
     for (int j = 0; j < 10; j++) {
-      //currentSymbol = *currentBoard;
       print_cell(*currentSymbol);
       currentSymbol++;
     }
