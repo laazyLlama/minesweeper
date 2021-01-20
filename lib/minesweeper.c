@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 //Author:           laazyLlama
 //Date Created:     24/12/2020
-//Last Changes:     24/12/2020
+//Last Changes:     17/01/2021
 //-----------------------------------------------------------------------------
 
 #include <stdio.h>
@@ -111,22 +111,85 @@ void generate_board(int saveX, int saveY, int count, char *cell) {
  * @return always void
  */
 void generate_surrounding_numbers(char *bomb, char *start) {
-//TODO: rewrite this bullshit to be understandable and fully functional
-  if((bomb - start) >= 10) {
-    for (int i = -11; i <= -9; i++) {
+//TODO: rewrite this bullshit to be understandable!!! at least it seems to
+//      work for now :D ...
+  //numbers above bomb:
+  //check if bomb isn't in top row
+  if ((bomb - start) >= 10) {
+    //check if bomb is in first column
+    if (((bomb - start) % 10) == 0) {
+      for (int i = -10; i <= -9; i++) {
+        if (*(bomb + i) != '*') {
+          (*(bomb + i))++;
+        }
+      }
+    }
+    //check if bomb is in last column
+    else if (((bomb - start) % 10) == 9) {
+      for (int i = -11; i <= -10; i++) {
+        if (*(bomb + i) != '*') {
+          (*(bomb + i))++;
+        }
+      }
+    }
+    else {
+      for (int i = -11; i <= -9; i++) {
+        if (*(bomb + i) != '*') {
+          (*(bomb + i))++;
+        }
+      }
+    }
+  }
+
+  //numbers to the right and left of the bomb:
+  //check if bomb is in first column
+  if (((bomb - start) % 10) == 0) {
+    for (int i = 0; i <= 1; i++) {
       if (*(bomb + i) != '*') {
         (*(bomb + i))++;
       }
     }
   }
-  for (int i = -1; i <= 1; i++) {
-    if (*(bomb + i) != '*') {
-      (*(bomb + i))++;
+  //check if bomb is in last column
+  else if (((bomb - start) % 10) == 9) {
+    for (int i = -1; i <= 0; i++) {
+      if (*(bomb + i) != '*') {
+          (*(bomb + i))++;
+      }
     }
   }
-  for (int i = 9; i <= 11; i++) {
-    if (*(bomb + i) != '*') {
-      (*(bomb + i))++;
+  else {
+    for (int i = -1; i <= 1; i++) {
+      if (*(bomb + i) != '*') {
+        (*(bomb + i))++;
+      }
+    }
+  }
+
+  //numbers beneath the bomb:
+  //check if bomb isn't in bottom row
+  if ((bomb - start) < 90) {
+    if (((bomb - start) % 10) == 0) {
+      for (int i = 10; i <= 11; i++) {
+        if (*(bomb + i) != '*') {
+          (*(bomb + i))++;
+        }
+      }
+    }
+    //check if bomb is in last column
+    else if (((bomb - start) % 10) == 9) {
+      for (int i = 9; i <= 10; i++) {
+        if (*(bomb + i) != '*') {
+          (*(bomb + i))++;
+        }
+      }
+    }
+    else {
+      for (int i = 9; i <= 11; i++) {
+        if (*(bomb + i) != '*') {
+          (*(bomb + i))++;
+        }
+      }
     }
   }
 }
