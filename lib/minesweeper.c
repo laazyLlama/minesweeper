@@ -26,14 +26,20 @@ void print_horizontal_border();
 void print_cell(char);
 
 int main() {
+  //generated board with all the values in it
   char board[10][10];
+  //board, that contains the state currently visible to the player
+  char currentBoard[10][10];
   for (int i = 0; i < 10; i++) {
     for (int j = 0; j < 10; j++) {
       board[i][j] = '0';
+      currentBoard[i][j] = '.';
     }
   }
-
-  generate_board(0, 0, 10, &board[0][0]);
+  //0 = all spaces uncovered (win), 1 = there is at least 1 remaining space
+  //    covered
+  short coveredSpaces = 0;
+  char userInput[3];
 
   //board layout:
   /*
@@ -61,7 +67,36 @@ int main() {
    *    +---+---+---+---+---+---+---+---+---+---+
    */
   //none = " ", covered = ".", flag = "X", mine = "*", number = "1-8"
-  print_board(&board[0][0]);
+
+  while (1) {
+    printf("  > ");
+    if (fgets(userInput, 3, stdin) != NULL) {
+      //TODO: get board position from the given input, check for validity and
+      //      uncover the specified space
+      //      !!!check if input was to long!!! (idk how tbh, but its late so..)
+      puts(userInput);
+      break;
+    }
+  }
+
+  generate_board(0, 0, 10, &board[0][0]);
+
+  coveredSpaces = 0;
+  for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; j++) {
+      if (currentBoard[i][j] == '.') {
+        coveredSpaces = 1;
+        //printf("1");
+        break;
+      }
+    }
+    if (coveredSpaces == 1) {
+      //printf("2");
+      break;
+    }
+  }
+
+  print_board(&currentBoard[0][0]);
 
   return 0;
 }
@@ -113,6 +148,8 @@ void generate_board(int saveX, int saveY, int count, char *cell) {
 void generate_surrounding_numbers(char *bomb, char *start) {
 //TODO: rewrite this bullshit to be understandable!!! at least it seems to
 //      work for now :D ...
+//HINT: maybe cheking for the rows should be done first, to be able to combine
+//      all three rows, that need numbers, in a single if-statement?
   //numbers above bomb:
   //check if bomb isn't in top row
   if ((bomb - start) >= 10) {
@@ -169,6 +206,7 @@ void generate_surrounding_numbers(char *bomb, char *start) {
   //numbers beneath the bomb:
   //check if bomb isn't in bottom row
   if ((bomb - start) < 90) {
+    //check if bomb is in first column
     if (((bomb - start) % 10) == 0) {
       for (int i = 10; i <= 11; i++) {
         if (*(bomb + i) != '*') {
