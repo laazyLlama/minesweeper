@@ -19,6 +19,7 @@
 //#define ANSI_COLOR_CYAN "\x1b[36m"
 #define ANSI_COLOR_RESET "\x1b[0m"
 
+int get_user_input();
 void generate_board(int, int, int, char*);
 void generate_surrounding_numbers(char*, char*);
 void print_board(char*);
@@ -39,7 +40,8 @@ int main() {
   //0 = all spaces uncovered (win), 1 = there is at least 1 remaining space
   //    covered
   short coveredSpaces = 0;
-  char userInput[3];
+  //the cell the user has selected, to uncover or flag
+  int selectedCell = -1;
 
   //board layout:
   /*
@@ -68,17 +70,11 @@ int main() {
    */
   //none = " ", covered = ".", flag = "X", mine = "*", number = "1-8"
 
-  while (1) {
-    printf("  > ");
-    if (fgets(userInput, 3, stdin) != NULL) {
-      //TODO: get board position from the given input, check for validity and
-      //      uncover the specified space
-      //      !!!check if input was to long!!! (idk how tbh, but its late so..)
-      puts(userInput);
-      break;
-    }
-  }
+  //if the user wants to add a flag he has to type a 'X' in fornt of the
+  //  coordinates he wants to flag (e.g. XA0)
 
+  selectedCell = get_user_input();
+  printf("%d\n", selectedCell);
   generate_board(0, 0, 10, &board[0][0]);
 
   coveredSpaces = 0;
@@ -99,6 +95,44 @@ int main() {
   print_board(&currentBoard[0][0]);
 
   return 0;
+}
+
+//TODO: write documentation for this funciton!!! and remove debug prints
+int get_user_input() {
+  int givenCell = 0;
+  char userInput[4];
+  //char buffer = 0;
+  while (1) {
+    printf("  > ");
+    if (fgets(userInput, 4, stdin) != NULL) {
+      for (int i = 0; i < 3; i++) {
+        if (userInput[i] > 96) {
+          userInput[i] = userInput[i] - 32;
+          //printf("input changed\n");
+        }
+      }
+      if (userInput[0] == 'X') {
+        givenCell = givenCell + 100;
+        //printf("its an X: %d\n", givenCell);
+        for (int i = 0; i < 4; i++) {
+          userInput[i] = userInput[i + 1];
+        }
+        //puts(userInput);
+      }
+      if ((userInput[0] >= 'A') && (userInput[0]) <= 'J') {
+        givenCell = givenCell + ((userInput[0] - 65) * 10);
+        //printf("its a letter: %d\n", givenCell);
+        if ((userInput[1] >= '0') && (userInput[1] <= '9')) {
+          givenCell = givenCell + (userInput[1] - 48);
+          //printf("its a number: %d\n", givenCell);
+          break;
+        }
+      }
+    }
+    printf("\nInvalid Input, please try again\n");
+    givenCell = 0;
+  }
+  return givenCell;
 }
 
 /**
