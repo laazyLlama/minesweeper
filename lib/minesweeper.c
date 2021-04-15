@@ -71,7 +71,8 @@ int main() {
   //none = " ", covered = ".", flag = "X", mine = "*", number = "1-8"
 
   //if the user wants to add a flag he has to type a 'X' in fornt of the
-  //  coordinates he wants to flag (e.g. XA0)
+  //  coordinates he wants to flag (e.g. XA0, will create a flag on A0, instead
+  //  of uncovering it)
 
   selectedCell = get_user_input();
   printf("%d\n", selectedCell);
