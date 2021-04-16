@@ -74,8 +74,9 @@ int main() {
   //  coordinates he wants to flag (e.g. XA0, will create a flag on A0, instead
   //  of uncovering it)
 
+  print_board(&currentBoard[0][0]);
   selectedCell = get_user_input();
-  printf("%d\n", selectedCell);
+  //printf("%d\n", selectedCell);
   generate_board(0, 0, 10, &board[0][0]);
 
   coveredSpaces = 0;
@@ -98,41 +99,46 @@ int main() {
   return 0;
 }
 
-//TODO: write documentation for this funciton!!! and remove debug prints
+/**
+ * Gets user input (selected cell) and converts it into an int, that gives the
+ * adress of the selected cell if added to the addres of the first cell. if the
+ * user choose to flag the cell 100 is added to the selected cell
+ *
+ * @return givenCell int, the number of the cell, the user choose
+ */
 int get_user_input() {
   int givenCell = 0;
   char userInput[4];
-  //char buffer = 0;
   while (1) {
     printf("  > ");
+    // get user input and convert it to uppercase letters if needed
     if (fgets(userInput, 4, stdin) != NULL) {
       for (int i = 0; i < 3; i++) {
         if (userInput[i] > 96) {
           userInput[i] = userInput[i] - 32;
-          //printf("input changed\n");
         }
       }
+      // add 100 to givenCell if user chose to put a flag
       if (userInput[0] == 'X') {
         givenCell = givenCell + 100;
-        //printf("its an X: %d\n", givenCell);
         for (int i = 0; i < 4; i++) {
           userInput[i] = userInput[i + 1];
         }
-        //puts(userInput);
       }
+      // convert the user input to a single int reffering to the choosen cell
       if ((userInput[0] >= 'A') && (userInput[0]) <= 'J') {
         givenCell = givenCell + ((userInput[0] - 65) * 10);
-        //printf("its a letter: %d\n", givenCell);
         if ((userInput[1] >= '0') && (userInput[1] <= '9')) {
           givenCell = givenCell + (userInput[1] - 48);
-          //printf("its a number: %d\n", givenCell);
           break;
         }
       }
     }
+    // ask user for another input if there was an error
     printf("\nInvalid Input, please try again\n");
     givenCell = 0;
   }
+  // return the int reffering to the cell the user chose
   return givenCell;
 }
 
