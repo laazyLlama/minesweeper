@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 //Author:           laazyLlama
 //Date Created:     24/12/2020
-//Last Changes:     16/04/2021
+//Last Changes:     17/04/2021
 //-----------------------------------------------------------------------------
 
 #include <stdio.h>
@@ -20,8 +20,8 @@
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 int get_user_input();
+void uncover_cell(int, char*, char*);
 void generate_board(int, int, char*);
-//void generate_board(int, int, int, char*);
 void generate_surrounding_numbers(char*, char*);
 void print_board(char*);
 void print_horizontal_border();
@@ -89,7 +89,8 @@ int main() {
 
   generate_board(selectedCell, 10, &board[0][0]);
   //printf("\nsaveY = %d\nsaveX = %d\n", selectedCell / 10, selectedCell % 10);
-  currentBoard[selectedCell / 10][selectedCell % 10] = 'X';
+  //currentBoard[selectedCell / 10][selectedCell % 10] = 'X';
+  uncover_cell(selectedCell, &board[0][0], &currentBoard[0][0]);
 
   // GAMELOOP:
   do {
@@ -155,6 +156,17 @@ int get_user_input() {
   }
   // return the int reffering to the cell the user chose
   return givenCell;
+}
+
+/**
+ * Writes a given cell from a sourceBoard to another destinationBoard
+ *
+ * @return always void
+ */
+void uncover_cell(int pos, char *sourceBoard, char *destBoard) {
+  *(destBoard + pos) = *(sourceBoard + pos);
+
+  return;
 }
 
 /**
