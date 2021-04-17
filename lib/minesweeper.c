@@ -88,12 +88,15 @@ int main() {
   }
 
   generate_board(selectedCell, 10, &board[0][0]);
-  //printf("\nsaveY = %d\nsaveX = %d\n", selectedCell / 10, selectedCell % 10);
-  //currentBoard[selectedCell / 10][selectedCell % 10] = 'X';
   uncover_cell(selectedCell, &board[0][0], &currentBoard[0][0]);
+  print_board(&currentBoard[0][0]);
 
   // GAMELOOP:
   do {
+    selectedCell = get_user_input();
+    uncover_cell(selectedCell, &board[0][0], &currentBoard[0][0]);
+    print_board(&currentBoard[0][0]);
+
     // check if there are any covered spaces left
     coveredSpaces = 0;
     for (int i = 0; i < 10; i++) {
@@ -107,10 +110,8 @@ int main() {
         break;
       }
     }
-
-    print_board(&currentBoard[0][0]);
   //exit gameloop, to end the game when all spaces are uncovered
-  } while (0); //(coveredSpaces != 0);
+  } while (coveredSpaces != 0);
 
   return 0;
 }
@@ -164,7 +165,12 @@ int get_user_input() {
  * @return always void
  */
 void uncover_cell(int pos, char *sourceBoard, char *destBoard) {
-  *(destBoard + pos) = *(sourceBoard + pos);
+  if (*(sourceBoard + pos) != '0') {
+    *(destBoard + pos) = *(sourceBoard + pos);
+  }
+  else {
+    *(destBoard + pos) = ' ';
+  }
 
   return;
 }
