@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 //Author:           laazyLlama
 //Date Created:     24/12/2020
-//Last Changes:     17/01/2021
+//Last Changes:     16/04/2021
 //-----------------------------------------------------------------------------
 
 #include <stdio.h>
@@ -20,7 +20,8 @@
 #define ANSI_COLOR_RESET "\x1b[0m"
 
 int get_user_input();
-void generate_board(int, int, int, char*);
+void generate_board(int, int, char*);
+//void generate_board(int, int, int, char*);
 void generate_surrounding_numbers(char*, char*);
 void print_board(char*);
 void print_horizontal_border();
@@ -43,7 +44,7 @@ int main() {
   //the cell the user has selected, to uncover or flag
   int selectedCell = -1;
 
-  //board layout:
+  //board layout and general rules:
   /*
    *      0   1   2   3   4   5   6   7   8   9
    *    +---+---+---+---+---+---+---+---+---+---+
@@ -75,26 +76,40 @@ int main() {
   //  of uncovering it)
 
   print_board(&currentBoard[0][0]);
-  selectedCell = get_user_input();
-  //printf("%d\n", selectedCell);
-  generate_board(0, 0, 10, &board[0][0]);
 
-  coveredSpaces = 0;
-  for (int i = 0; i < 10; i++) {
-    for (int j = 0; j < 10; j++) {
-      if (currentBoard[i][j] == '.') {
-        coveredSpaces = 1;
-        //printf("1");
-        break;
-      }
-    }
-    if (coveredSpaces == 1) {
-      //printf("2");
+  while (1) {
+    selectedCell = get_user_input();
+    if (selectedCell < 100) {
       break;
+    }
+    else {
+      printf("\nYou cannot flag the first cell!\n");
     }
   }
 
-  print_board(&currentBoard[0][0]);
+  generate_board(selectedCell, 10, &board[0][0]);
+  //printf("\nsaveY = %d\nsaveX = %d\n", selectedCell / 10, selectedCell % 10);
+  currentBoard[selectedCell / 10][selectedCell % 10] = 'X';
+
+  // GAMELOOP:
+  do {
+    // check if there are any covered spaces left
+    coveredSpaces = 0;
+    for (int i = 0; i < 10; i++) {
+      for (int j = 0; j < 10; j++) {
+        if (currentBoard[i][j] == '.') {
+          coveredSpaces = 1;
+          break;
+        }
+      }
+      if (coveredSpaces == 1) {
+        break;
+      }
+    }
+
+    print_board(&currentBoard[0][0]);
+  //exit gameloop, to end the game when all spaces are uncovered
+  } while (0); //(coveredSpaces != 0);
 
   return 0;
 }
@@ -145,29 +160,26 @@ int get_user_input() {
 /**
  * Generates a minesweeper board with a guaranteed save position
  *
- * @param saveX The X coordinate of the guaranteed save position
- * @param saveY The Y coordinate of the guaranteed save position
- * @param count Number of bombs to generate
- * @param *cell a pointer to the first cell of the board
+ * @param savePos The Position, where no Bomb is allowed to generate
+ * @param BombCount Number of bombs to generate
+ * @param *firstCell a pointer to the first cell of the board
  *
  * @return always void
  */
-void generate_board(int saveX, int saveY, int count, char *cell) {
-  int x = 0;
-  int y = 0;
+void generate_board(int savePos, int bombCount, char *firstCell) {
+  int bomb = -1;
   // Intialize rng using system time as seed
   srand((unsigned) time(0));
 
-  for (int i = 0; i < count; i++) {
+  for (int i = 0; i < bombCount; i++) {
     // generate a random position to place a bomb
-    x = rand() % 10;
-    y = rand() % 10;
+    bomb = rand() % 100;
     // check if the currently selected cell is valid (it is not the save pos
     // and has no bomb in it)
-    if ((*(cell + (x + y * 10)) != '*') && (x != saveX || y != saveY)) {
+    if((*(firstCell + bomb) != '*') && (bomb != savePos)) {
       // if the cell is valid generate a bomb and its surrounding numbers
-      *(cell + (x + y * 10)) = '*';
-      generate_surrounding_numbers(cell + (x + y * 10), cell);
+      *(firstCell + bomb) = '*';
+      generate_surrounding_numbers(firstCell + bomb, firstCell);
     }
     // if not, decrease the counter, to try generating another, valid bomb
     else {
