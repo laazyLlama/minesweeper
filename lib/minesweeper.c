@@ -18,6 +18,7 @@
 //#define ANSI_COLOR_MAGENTA "\x1b[35m"
 //#define ANSI_COLOR_CYAN "\x1b[36m"
 #define ANSI_COLOR_RESET "\x1b[0m"
+#define BOMB_COUNT 10
 
 int get_user_input();
 void uncover_cell(int, char*, char*);
@@ -87,7 +88,7 @@ int main() {
     }
   }
 
-  generate_board(selectedCell, 10, &board[0][0]);
+  generate_board(selectedCell, BOMB_COUNT, &board[0][0]);
   uncover_cell(selectedCell, &board[0][0], &currentBoard[0][0]);
   print_board(&currentBoard[0][0]);
 
@@ -147,7 +148,7 @@ int get_user_input() {
         givenCell = givenCell + ((userInput[0] - 65) * 10);
         if ((userInput[1] >= '0') && (userInput[1] <= '9')) {
           givenCell = givenCell + (userInput[1] - 48);
-          break;
+          break;  // breaks out of the while loop of line 129 if user input is ok
         }
       }
     }
